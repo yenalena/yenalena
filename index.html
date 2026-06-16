@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lena — App Portfolio</title>
+<style>
+  :root{
+    --bg:#f5f5f7;
+    --card:#ffffff;
+    --ink:#1d1d1f;
+    --sub:#6e6e73;
+    --line:#e6e6ea;
+    --accent:#6c5ce7;
+    --accent-soft:#eee9ff;
+    --radius:22px;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --shadow-lg:0 24px 60px rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Apple SD Gothic Neo","Pretendard","Malgun Gothic",sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+
+  /* ---------- HERO ---------- */
+  header.hero{padding:64px 0 36px}
+  .hero .eyebrow{color:var(--accent);font-weight:700;font-size:15px;letter-spacing:.3px}
+  .hero h1{font-size:46px;line-height:1.1;letter-spacing:-1px;margin:10px 0 14px}
+  .hero p{color:var(--sub);font-size:19px;max-width:620px;line-height:1.5}
+  .hero .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:9px 16px;font-size:14px;font-weight:600;color:var(--ink);box-shadow:var(--shadow)}
+  .pill b{color:var(--accent)}
+
+  /* ---------- SECTION ---------- */
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:46px 0 18px}
+  .section-head h2{font-size:26px;letter-spacing:-.5px}
+  .section-head span{color:var(--sub);font-size:14px}
+
+  /* ---------- FEATURED BANNER ---------- */
+  .featured{
+    position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    background:linear-gradient(135deg,#7c6cf0,#9d8bff 55%,#b6a7ff);
+    color:#fff;padding:34px 34px 0;box-shadow:var(--shadow);min-height:300px;display:flex;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .featured:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .featured .ftext{flex:1;z-index:2}
+  .featured .tag{font-size:13px;font-weight:700;opacity:.85;letter-spacing:.5px;text-transform:uppercase}
+  .featured h3{font-size:34px;margin:8px 0 6px;letter-spacing:-.5px}
+  .featured .desc{font-size:16px;opacity:.92;max-width:380px;line-height:1.5}
+  .featured .fmeta{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+  .featured .fmeta .chip{background:rgba(255,255,255,.22);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600}
+  .featured .shot{align-self:flex-end;margin-left:20px;z-index:2}
+  .featured .shot img{width:210px;display:block;border-radius:18px 18px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+
+  /* ---------- CARD GRID ---------- */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .card{
+    background:var(--card);border-radius:var(--radius);padding:18px;display:flex;gap:16px;
+    align-items:center;cursor:pointer;box-shadow:var(--shadow);
+    transition:transform .2s ease, box-shadow .2s ease;border:1px solid var(--line);
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  .icon{width:68px;height:68px;border-radius:16px;flex-shrink:0;object-fit:cover;
+    box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08)}
+  .icon.ph{display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800}
+  .card .ctext{flex:1;min-width:0}
+  .card .ctitle{font-size:17px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .card .csub{color:var(--sub);font-size:13.5px;margin-top:3px;line-height:1.4;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .cfoot{margin-top:9px;display:flex;align-items:center;gap:8px}
+  .card .cat{font-size:11.5px;color:var(--sub);font-weight:600}
+  .getbtn{background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:13px;
+    border:none;border-radius:999px;padding:7px 18px;cursor:pointer;white-space:nowrap}
+
+  /* ---------- MODAL (App Store product page) ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);
+    display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:40px 16px}
+  .overlay.open{display:flex}
+  .modal{background:var(--bg);width:100%;max-width:820px;border-radius:28px;overflow:hidden;
+    box-shadow:var(--shadow-lg);animation:pop .28s cubic-bezier(.2,.8,.2,1)}
+  @keyframes pop{from{transform:translateY(24px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  .mclose{position:sticky;top:14px;float:right;margin:14px 14px 0;z-index:5;
+    width:32px;height:32px;border-radius:999px;border:none;background:rgba(120,120,128,.3);
+    color:#fff;font-size:17px;cursor:pointer;backdrop-filter:blur(8px)}
+  .mhead{display:flex;gap:20px;align-items:center;padding:30px 30px 22px}
+  .mhead .icon{width:104px;height:104px;border-radius:23px}
+  .mhead .mh-t{flex:1}
+  .mhead h2{font-size:25px;letter-spacing:-.4px}
+  .mhead .mh-sub{color:var(--sub);font-size:15px;margin-top:4px}
+  .mhead .mh-row{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .storebtn{background:var(--accent);color:#fff;font-weight:800;border:none;border-radius:999px;
+    padding:9px 26px;font-size:15px;cursor:pointer;text-decoration:none;display:inline-block}
+  .storebtn.ghost{background:#fff;color:var(--accent);border:1.5px solid var(--accent)}
+  .storebtn.disabled{background:#e6e6ea;color:#a1a1a6;pointer-events:none}
+  .mh-period{color:var(--sub);font-size:13px;font-weight:600}
+
+  .mstats{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    margin:0 30px;overflow-x:auto}
+  .mstats .it{flex:1;text-align:center;padding:16px 10px;border-right:1px solid var(--line);min-width:110px}
+  .mstats .it:last-child{border-right:none}
+  .mstats .it .k{font-size:11px;color:var(--sub);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .mstats .it .v{font-size:15px;font-weight:700;margin-top:5px}
+
+  .shots{display:flex;gap:14px;overflow-x:auto;padding:24px 30px;scroll-snap-type:x mandatory}
+  .shots img,.shots .phshot{height:400px;border-radius:20px;scroll-snap-align:start;flex-shrink:0;
+    box-shadow:var(--shadow);border:1px solid var(--line)}
+  .phshot{width:195px;display:flex;align-items:center;justify-content:center;color:#fff;
+    font-weight:700;font-size:14px;text-align:center;background:linear-gradient(160deg,#c5bdf5,#8b7cf0)}
+
+  .mbody{padding:6px 30px 34px}
+  .mbody h4{font-size:19px;margin:26px 0 10px;letter-spacing:-.3px}
+  .mbody p{color:#2c2c2e;font-size:15.5px;line-height:1.65}
+  .hl{margin-top:14px}
+  .hl .hl-item{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:16px 18px;margin-bottom:10px}
+  .hl .hl-t{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .hl .hl-t .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  .hl .hl-d{color:var(--sub);font-size:14px;line-height:1.6;margin-top:7px}
+  .mbody ul.simple{margin:8px 0 0;padding-left:2px;list-style:none}
+  .mbody ul.simple li{font-size:15px;line-height:1.7;color:#2c2c2e;padding-left:22px;position:relative}
+  .mbody ul.simple li:before{content:"›";position:absolute;left:4px;color:var(--accent);font-weight:800}
+  .stack{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .stack span{background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:7px 15px;font-size:13.5px;font-weight:600}
+
+  /* ---------- SERVICE BLOCKS (포그니 멀티 서비스) ---------- */
+  .svc{display:flex;gap:20px;padding:20px 0;border-top:1px solid var(--line)}
+  .svc:first-of-type{border-top:none;padding-top:6px}
+  .svc-shot{flex-shrink:0;display:flex;gap:8px}
+  .svc-shot img{border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff;display:block}
+  .svc.mobile .svc-shot img{height:240px}
+  .svc.web .svc-shot img{width:330px}
+  .svc-body{flex:1;min-width:0}
+  .svc-body h5{font-size:16.5px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;letter-spacing:-.3px}
+  .svc-plat{font-size:11px;font-weight:800;background:var(--accent-soft);color:var(--accent);
+    border-radius:7px;padding:3px 9px;letter-spacing:.3px}
+  .svc-body .svc-desc{font-size:14px;color:var(--sub);margin-top:7px;line-height:1.6}
+  .svc-body ul{margin:10px 0 0;padding-left:2px;list-style:none}
+  .svc-body li{font-size:14px;line-height:1.65;color:#2c2c2e;padding-left:20px;position:relative}
+  .svc-body li:before{content:"›";position:absolute;left:3px;color:var(--accent);font-weight:800}
+  @media(max-width:720px){
+    .svc{flex-direction:column}
+    .svc.web .svc-shot img{width:100%}
+    .svc.mobile .svc-shot img{height:auto;width:60%}
+  }
+  /* 포그니 featured 그라데이션 (틸/그린 — AX 테마) */
+  .featured.ax{background:linear-gradient(135deg,#16a085,#1abc9c 55%,#48c9b0)}
+
+  footer{text-align:center;color:var(--sub);font-size:13px;margin-top:60px}
+  @media(max-width:720px){
+    .hero h1{font-size:34px}.grid{grid-template-columns:1fr}
+    .featured{flex-direction:column}.featured .shot{align-self:center;margin:18px 0 0}
+    .mhead{flex-direction:column;text-align:center}.mhead .mh-row{justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">FLUTTER · MOBILE DEVELOPER · AX</div>
+    <h1>Lena의 앱 포트폴리오</h1>
+    <p>기획부터 배포·운영까지 상용 서비스를 만들고, AI를 활용해 현장 업무를 디지털 전환(AX)합니다.</p>
+    <div class="meta">
+      <div class="pill"><b>4</b> 상용 서비스</div>
+      <div class="pill"><b>4</b> AX 사내 서비스</div>
+      <div class="pill">Flutter · Riverpod · Firebase</div>
+      <div class="pill">📫 pogny7000@gmail.com</div>
+    </div>
+  </header>
+
+  <!-- ===== AX · 사내 서비스 ===== -->
+  <div class="section-head">
+    <h2>AX · 업무 자동화</h2>
+    <span>AI·웹 기반 현장 업무 디지털 전환</span>
+  </div>
+
+  <!-- Featured: 포그니병원 AX -->
+  <div class="featured ax" onclick="openApp('pogny')">
+    <div class="ftext">
+      <div class="tag">AX · AI 기반 사내 플랫폼</div>
+      <h3>포그니병원 운영 자동화</h3>
+      <div class="desc">차량 배차 · 환자 신청 · 영양실 식이까지, AI를 활용해 병원 현장 업무를 한 사람이 4개 서비스로 디지털 전환했습니다.</div>
+      <div class="fmeta">
+        <span class="chip">기사앱 · 모바일</span>
+        <span class="chip">관리자 · 웹</span>
+        <span class="chip">환자 신청 · 키오스크</span>
+        <span class="chip">식이 관리 · 웹</span>
+      </div>
+    </div>
+    <div class="shot"><img src="assets/pogny/patient.png" alt="포그니 환자 키오스크" /></div>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <!-- 조사구 사업체 검색·관리 시스템 -->
+    <div class="card" onclick="openApp('research')">
+      <div class="icon ph" style="background:linear-gradient(160deg,#1abc9c,#16a085)">🗺️</div>
+      <div class="ctext">
+        <div class="ctitle">조사구 사업체 검색·관리 시스템</div>
+        <div class="csub">현장 조사 사업체 통합 검색·관리 웹 툴. 조사구 분류·상태추적·지도 시각화·CSV 가져오기.</div>
+        <div class="cfoot"><span class="cat">AX · 데이터 관리 툴 · Web</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+  </div>
+
+  <!-- ===== 회사 프로젝트 ===== -->
+  <div class="section-head">
+    <h2>회사 프로젝트</h2>
+    <span>실제 출시된 상용 서비스</span>
+  </div>
+
+  <!-- Featured: 비포펫 -->
+  <div class="featured" onclick="openApp('beforpet')">
+    <div class="ftext">
+      <div class="tag">Featured · 최신작</div>
+      <h3>비포펫 BeforPet</h3>
+      <div class="desc">반려견 산책 중개 + 실시간 GPS 라이브 트래킹 O2O 서비스. 사이드 프로젝트에서 정식 서비스로 합류해 메인 개발을 맡았습니다.</div>
+      <div class="fmeta">
+        <span class="chip">Flutter</span>
+        <span class="chip">Riverpod / GetX</span>
+        <span class="chip">NaverMap API</span>
+        <span class="chip">2024.09 ~ 2026.03</span>
+      </div>
+    </div>
+    <div class="shot"><img src="assets/beforpet/screenshot_1.jpg" alt="비포펫 스크린샷" /></div>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <!-- 아이러브살롱 -->
+    <div class="card" onclick="openApp('ilovesalon')">
+      <img class="icon" src="assets/ilovesalon/icon.png" alt="아이러브살롱">
+      <div class="ctext">
+        <div class="ctitle">아이러브살롱</div>
+        <div class="csub">헤어 디자이너·고객 O2O 매칭. 멀티레포 + AI 모발진단(ChatGPT) + Flutter Web.</div>
+        <div class="cfoot"><span class="cat">뷰티 · O2O 매칭</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+
+    <!-- PetPharm -->
+    <div class="card" onclick="openApp('petpharm')">
+      <img class="icon" src="assets/petpharm/icon.png" alt="펫팜">
+      <div class="ctext">
+        <div class="ctitle">펫팜 (PetPharm)</div>
+        <div class="csub">위치 기반 동물약국·의약품 찾기 + 건강·복약 관리 O2O. 0→1 단독 개발, 2년 운영.</div>
+        <div class="cfoot"><span class="cat">펫 · 헬스케어 O2O</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+
+    <!-- TheCup -->
+    <div class="card" onclick="openApp('thecup')">
+      <div class="icon ph" style="background:linear-gradient(160deg,#ffb86c,#ff9f43)">☕</div>
+      <div class="ctext">
+        <div class="ctitle">TheCup</div>
+        <div class="csub">목표 동기부여·성취 자기계발 커뮤니티. 기획·결제·배포까지 7개월 1인 개발.</div>
+        <div class="cfoot"><span class="cat">자기계발 · 커뮤니티</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+  </div>
+
+  <!-- ===== 사이드 프로젝트 ===== -->
+  <div class="section-head">
+    <h2>사이드 프로젝트</h2>
+    <span>개인 작업물</span>
+  </div>
+  <div class="grid">
+    <div class="card" onclick="openApp('songsong')">
+      <img class="icon" src="assets/songsong/icon.webp" alt="쏭쏭이">
+      <div class="ctext">
+        <div class="ctitle">쏭쏭이</div>
+        <div class="csub">무한 랜덤 뽑기 도구. Rive 애니메이션 + iPhone·iPad 반응형.</div>
+        <div class="cfoot"><span class="cat">유틸리티</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+    <div class="card" onclick="openApp('pokewiki')">
+      <img class="icon" src="assets/pokewiki/icon.webp" alt="PokeWiki">
+      <div class="ctext">
+        <div class="ctitle">PokeWiki</div>
+        <div class="csub">전국~팔데아도감 수록 포켓몬 도감. 타입·형태 필터 검색.</div>
+        <div class="cfoot"><span class="cat">레퍼런스 · 도감</span></div>
+      </div>
+      <button class="getbtn">보기</button>
+    </div>
+  </div>
+
+  <footer>© 2026 Lena · Built with Flutter — 목업 데모</footer>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeApp()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const APPS = {
+  beforpet:{
+    name:"비포펫 beforpet", sub:"반려견 산책 중개 · 실시간 라이브 트래킹",
+    icon:"assets/beforpet/icon.webp",
+    period:"2024.09 ~ 2026.03", category:"펫 · O2O 위치기반", role:"메인 개발 · 아키텍처 설계",
+    play:"https://play.google.com/store/apps/details?id=com.beforpet.android.beforpet&hl=ko",
+    appstore:"https://apps.apple.com/kr/app/%EB%B9%84%ED%8F%AC%ED%8E%AB-%EC%82%B0%EC%B1%85-%EB%8C%80%ED%96%89-%EB%B0%A9%EB%AC%B8-%EC%BC%80%EC%96%B4-%EC%84%9C%EB%B9%84%EC%8A%A4/id6476087312",
+    shots:[
+      "assets/beforpet/screenshot_1.jpg",
+      "assets/beforpet/screenshot_2.jpg",
+      "assets/beforpet/screenshot_3.jpg",
+      "assets/beforpet/screenshot_4.jpg",
+      "assets/beforpet/screenshot_5.jpg"
+    ],
+    stack:["Flutter","Riverpod / GetX","NaverMap API"],
+    about:"견주와 도그워커를 매칭하고 산책 진행 상황을 실시간으로 기록하는 O2O 서비스입니다. 사이드 프로젝트에서 시작해 정식 상용 서비스로 합류하여, 핵심 모바일 애플리케이션 개발 총괄과 서비스 아키텍처 설계를 담당했습니다.",
+    points:[
+      "실시간 O2O 예약·매칭 인터페이스 개발 및 데이터 동기화를 위한 상태관리 아키텍처 설계",
+      "백그라운드 GPS 라이브 트래킹 구현 — iOS/Android 위치권한·절전모드 대응, 경로 보정 필터링으로 정확도 향상",
+      "산책 보고서 자동 생성 — 이동경로(Polyline)·거리·시간 시각화 + 배변·급수 이벤트 타임라인 결합",
+      "NaverMap API 연동, PG 결제·도그워커 정산 자동화, 산책 사진 피드 커뮤니티 구현",
+      "크로스플랫폼 클린 아키텍처 도입, 코드 리뷰 프로세스·CI/CD 자동화로 배포 안정성 확보"
+    ]
+  },
+  pogny:{
+    name:"포그니병원 운영 자동화 (AX)", sub:"AI 기반 병원 현장 업무 디지털 전환 · 4개 서비스",
+    icon:null, iconBg:"linear-gradient(160deg,#1abc9c,#16a085)", iconEmoji:"🏥",
+    period:"진행 중", category:"AX · 헬스케어 DX", role:"기획·설계·개발 (단독)",
+    internal:true, play:"#", appstore:"#",
+    shots:[],
+    stack:["Flutter","JavaScript","Firebase / Firestore","AI (메모 자동분류·파싱)"],
+    about:"병원 현장의 수기·엑셀 기반 업무를 AI를 활용해 디지털 전환(AX)한 사내 플랫폼입니다. 차량 배차, 환자 신청 키오스크, 영양실 식이 관리까지 서로 연결된 4개 서비스를 기획·설계·개발했습니다. AI로 식이 메모를 자동 분류하고 EMR 엑셀을 파싱해, 영양실·차량팀의 반복 업무를 자동화했습니다.",
+    services:[
+      {name:"환자 신청 키오스크", plat:"모바일/키오스크", mobile:true,
+       shot:"assets/pogny/patient.png",
+       desc:"환자·보호자가 직접 차량과 식이를 신청하는 키오스크. 직관적 카드 UI로 누구나 쉽게 사용합니다.",
+       points:["차량 운행 신청 · 귀원 요청","신규 입원 식이 입력 · 끼니별 식이 취소","입력 즉시 관리자·영양실 화면에 실시간 반영"]},
+      {name:"영양실 식이 관리 대시보드", plat:"웹", mobile:false,
+       shot:"assets/pogny/diet.png",
+       desc:"닥터스 EMR 식이 엑셀을 브라우저에서 바로 파싱해 배식 요약을 자동 생성합니다.",
+       points:["xls 파싱(cp949) → 처방별·층별 배식 수량 자동 집계","AI 메모 자동 분류 — 자유 텍스트 식이 메모를 배식 고려사항으로 정리","끼니 간 변경사항(신규/퇴원/식이변경) 자동 감지, 배식 요약 인쇄"]},
+      {name:"차량운행 관리자", plat:"웹", mobile:false,
+       shot:"assets/pogny/admin.png",
+       desc:"환자 신청을 받아 배차하고 운행을 관리하는 통합 관제 대시보드.",
+       points:["운행·환자·차량·기사 통합 관리","앱 신청 목록 실시간 수신 → 기사·차량 배차","구간별 이동시간 DB로 예상 소요시간 산출"]},
+      {name:"기사 앱", plat:"모바일", mobile:true,
+       shot:"assets/pogny/driver.png",
+       desc:"배차된 일정을 확인하고 원터치로 운행을 기록하는 기사용 앱.",
+       points:["오늘 배차 일정 확인 · 환자/보호자 원터치 통화","원터치 운행 시작·종료, 도착시각·소요시간 자동 계산","계기판 km·이동 거리 기록, 내 운행 이력 조회"]}
+    ]
+  },
+  ilovesalon:{
+    name:"아이러브살롱", sub:"헤어 디자이너·고객 매칭 O2O 및 커뮤니티 플랫폼",
+    icon:"assets/ilovesalon/icon.png",
+    period:"2024.03 ~ 2024.09", category:"뷰티 · O2O 매칭", role:"개발 · 서비스 확장 주도",
+    play:"https://play.google.com/store/apps/details?id=com.rbh.ilovesalon.customer&hl=ko",
+    appstore:"https://apps.apple.com/kr/app/%EC%95%8C%EC%8B%B8-%EC%95%84%EC%9D%B4%EB%9F%AC%EB%B8%8C%EC%82%B4%EB%A1%B1-%EA%B3%A0%EA%B0%9D%EC%9D%84-%EC%9C%84%ED%95%9C-%EB%AA%A8%EB%93%A0-%EA%B2%83/id1601777636",
+    shots:[
+      "assets/ilovesalon/screenshot_1.webp",
+      "assets/ilovesalon/screenshot_2.webp",
+      "assets/ilovesalon/screenshot_3.webp",
+      "assets/ilovesalon/screenshot_4.webp",
+      "assets/ilovesalon/screenshot_5.webp"
+    ],
+    stack:["Flutter","Dart","Clean Architecture","ChatGPT Assistant API","Flutter Web","REST API"],
+    about:"헤어 디자이너와 고객을 연결하는 O2O 서비스이자 커뮤니티 플랫폼입니다. 고객(B2C)과 디자이너의 비즈니스 로직·사용자 경험이 완전히 다른 점을 고려해 타겟별로 앱을 분리 구축하고, AI·웹 기반으로 서비스 확장을 주도했습니다.",
+    points:[
+      "고객용·디자이너용 멀티 레포(Multi-repo) 구축 + 클린 아키텍처 전면 도입 — 계층 분리로 결합도↓, 앱별 독립 배포 사이클 확보",
+      "ChatGPT Assistant API 연동 'AI 모발 진단·맞춤 시술 제안' 구현 — 대화형 UI로 단순 매칭을 넘어선 뷰티 컨설팅 가치 제공",
+      "Flutter Web 선제 도입 — 단일 코드베이스로 반응형 UI·웹 라우팅 적용, 설치 부담 없이 커뮤니티 접근성 강화",
+      "크로스플랫폼 확장으로 다양한 디바이스에서 매끄러운 사용 경험 제공"
+    ]
+  },
+  petpharm:{
+    name:"펫팜 (PetPharm)", sub:"반려동물 헬스케어 · 동물약국 매칭 O2O 플랫폼",
+    icon:"assets/petpharm/icon.png",
+    period:"2022.03 ~ 2024.03", category:"펫 · 헬스케어 O2O", role:"프론트엔드 개발 (기여 80%)",
+    play:"https://play.google.com/store/apps/details?id=com.petpharm.petpharm_signature_aos&hl=ko-KR",
+    appstore:"https://apps.apple.com/kr/app/%ED%8E%AB%ED%8C%9C-%EC%9A%B0%EB%A6%AC%EB%8F%99%EB%84%A4-%EB%8F%99%EB%AC%BC%EC%95%BD%EA%B5%AD/id1664990271",
+    shots:[
+      "assets/petpharm/screenshot_1.png",
+      "assets/petpharm/screenshot_2.png",
+      "assets/petpharm/screenshot_3.png",
+      "assets/petpharm/screenshot_4.png",
+      "assets/petpharm/screenshot_5.png",
+      "assets/petpharm/screenshot_6.png"
+    ],
+    stack:["Flutter","Dart","Kotlin","GetX","Dio / GetConnect","Firebase (Crashlytics·Remote Config)","AppsFlyer","Naver Map API"],
+    about:"위치 기반 동물약국 찾기와 건강·복약 관리를 제공하는 O2O 플랫폼입니다. 기획 단계부터 참여해 초기 1인 개발로 정식 출시를 완수하고, 이후 팀 빌딩을 거쳐 약 2년간 안정적으로 서비스를 고도화했습니다.",
+    points:[
+      "0→1 MVP 단독 개발 — Kotlin+Flutter 하이브리드 구축, 2022.12 v1.0 런칭 후 4주 애자일 스프린트로 v1.12.8(2024.02)까지 중단 없는 업데이트",
+      "핵심 피처 구현 — NaverMap LBS 기반 약국·의약품 찾기 / 카메라 소변검사키트 촬영 건강 진단 / 캘린더 기반 구충제 복약 관리",
+      "폴드·플립 등 다양한 폼팩터 화면비에 대응하는 반응형 UI/UX 설계 및 호환성 확보",
+      "아키텍처 — GetX 전역상태·라우팅, GetConnect+Dio 네트워크, Firebase Remote Config(강제 업데이트)·Crashlytics, AppsFlyer 전환율 트래킹 파이프라인",
+      "배포·팀 — AAB/Ad-hoc/App Distribution/TestFlight 빌드 환경 구축, 신규 Flutter 개발자 온보딩·코드리뷰 문화 정착"
+    ]
+  },
+  thecup:{
+    name:"TheCup", sub:"목표 동기부여·성취를 돕는 자기계발 커뮤니티 앱",
+    icon:null, iconBg:"linear-gradient(160deg,#ffb86c,#ff9f43)", iconEmoji:"☕",
+    period:"2021.05 ~ 2021.12", category:"자기계발 · 커뮤니티", role:"모바일 앱 1인 개발 (Flutter)",
+    play:"https://play.google.com/store/apps/details?id=com.thecup.thecup&hl=ko-KR", appstore:"#",
+    shots:[
+      "assets/thecup/screenshot_1.png",
+      "assets/thecup/screenshot_2.png",
+      "assets/thecup/screenshot_3.png",
+      "assets/thecup/screenshot_4.png",
+      "assets/thecup/screenshot_5.png",
+      "assets/thecup/screenshot_6.png"
+    ],
+    stack:["Flutter","Dart","GetX","Firebase (Auth·Database)","IAP","Stripe API","Git"],
+    about:"사용자의 목표 달성을 위한 동기부여·성취를 돕는 자기계발 커뮤니티 앱입니다. 스타트업 초기 1인 개발자로 합류해 기획·화면 설계부터 앱 개발, 결제 연동, 배포까지 약 7개월간 전체 제품 개발 사이클을 단독 수행해 런칭했습니다.",
+    points:[
+      "기획→출시 End-to-End 1인 개발 — 기능 설계서·유저 플로우·화면 설계, Figma·Zeplin·AdobeXD로 디자이너와 협업해 신속 구현",
+      "핵심 기능 전반 개발 — 로그인/회원가입, 피드 뷰, 콘텐츠 CRUD, 검색",
+      "멀티 플랫폼 결제 시스템 — IAP 네이티브 인앱결제 + Stripe 연동 웹 결제 페이지 별도 구축",
+      "아키텍처 — GetX 기반 MVC 패턴 설계, Firebase(Auth·Realtime DB)로 서버 없이 BaaS 구축, Git 버전 관리"
+    ]
+  },
+  songsong:{
+    name:"쏭쏭이", sub:"한계없는 무한 랜덤 뽑기 도구",
+    icon:"assets/songsong/icon.webp",
+    period:"개인 프로젝트", category:"유틸리티", role:"단독 개발",
+    play:"#", appstore:"#",
+    shots:[
+      "assets/songsong/screenshot_0.webp",
+      "assets/songsong/screenshot_1.webp",
+      "assets/songsong/screenshot_2.webp",
+      "assets/songsong/screenshot_3.webp",
+      "assets/songsong/screenshot_4.webp"
+    ],
+    stack:["Flutter","Dart","Rive"],
+    about:"그룹·수량을 자유롭게 설정해 나만의 랜덤 뽑기를 만드는 유틸리티 앱입니다. 저녁 메뉴 정하기, 벌칙 게임, 선물 추첨 등 다양한 상황에서 활용할 수 있습니다.",
+    points:[
+      "그룹·수량 커스텀 설정 + 뽑기 현황판으로 나만의 랜덤 뽑기 구성",
+      "커스텀 이미지 삽입 등 누구나 쉽게 쓰는 직관적 UI",
+      "Rive 라이브러리로 자연스럽고 역동적인 당첨 애니메이션 구현",
+      "iPhone·iPad 해상도 동시 대응 반응형 UI 설계"
+    ]
+  },
+  pokewiki:{
+    name:"PokeWiki", sub:"최신 도감까지 수록한 포켓몬 도감 앱",
+    icon:"assets/pokewiki/icon.webp",
+    period:"개인 프로젝트", category:"레퍼런스 · 도감", role:"단독 개발",
+    play:"#", appstore:"#",
+    shots:[
+      "assets/pokewiki/screenshot_1.webp",
+      "assets/pokewiki/screenshot_2.webp",
+      "assets/pokewiki/screenshot_3.webp"
+    ],
+    stack:["Flutter","Dart","REST API"],
+    about:"전국도감부터 팔데아도감까지 최신 도감을 모두 수록한 포켓몬 도감 앱입니다. 타입·형태 기반 필터 검색으로 원하는 포켓몬을 빠르게 찾을 수 있습니다.",
+    points:[
+      "전국도감~팔데아도감 등 최신 도감 데이터 수록",
+      "타입·형태 기반 필터 검색으로 원하는 포켓몬 빠르게 탐색",
+      "도감 카드·목록·상세 UI 및 REST API 연동 구현"
+    ]
+  },
+  research:{
+    name:"조사구 사업체 검색·관리 시스템", sub:"사업체 정보 통합 모니터링 & 좌표 일괄 매핑 패키지",
+    icon:null, iconBg:"linear-gradient(160deg,#1abc9c,#16a085)", iconEmoji:"🗺️",
+    period:"웹 · 개인 프로젝트", category:"AX · 데이터 관리 툴", role:"기획·개발 (단독)",
+    live:"https://research-helper-vxl1.vercel.app/", play:"#", appstore:"#",
+    shots:["assets/research/screen_1.png"],
+    stack:["React","Next.js","Vercel"],
+    about:"현장 조사 업무를 디지털화한 웹 도구입니다. 특정 지역(조사구) 내 사업체 정보를 통합 검색·관리하고, 조사 진행 상태를 추적합니다. 안산 백운동·원곡동 일대 254개소 사업체 데이터를 조사구별로 분류해 모니터링하도록 설계했습니다.",
+    points:[
+      "사업체명·대표자·주소·전화번호 실시간 통합 쿼리 필터 검색",
+      "조사구 번호별 분류 + 조사 진행 상태(미조사·진행중·완료) 추적·집계",
+      "CSV 일괄 가져오기(Import)로 대량 사업체 데이터 등록",
+      "조사구 가상 지도 시각화 — 좌표 일괄 매핑으로 위치 기반 파악"
+    ]
+  }
+};
+
+function iconHTML(a, big){
+  if(a.icon) return `<img class="icon" src="${a.icon}" alt="${a.name}">`;
+  return `<div class="icon ph" style="background:${a.iconBg};font-size:${big?42:26}px">${a.iconEmoji||''}</div>`;
+}
+function storeBtn(label, url){
+  if(!url || url==="#") return `<span class="storebtn ${label==='App Store'?'':'ghost'} disabled">${label}</span>`;
+  return `<a class="storebtn ${label==='App Store'?'':'ghost'}" href="${url}" target="_blank">${label}</a>`;
+}
+
+function openApp(key){
+  const a = APPS[key];
+  // 서비스(멀티 앱) 묶음이 있으면 갤러리 대신 서비스별 블록으로 표시
+  let shotsHTML = '';
+  if(!a.services){
+    shotsHTML = a.shots.length
+      ? `<div class="shots">` + a.shots.map(s=>`<img src="${s}" alt="screenshot">`).join('') + `</div>`
+      : `<div class="shots"><div class="phshot">스크린샷<br>이미지를<br>여기에</div><div class="phshot">스크린샷<br>이미지를<br>여기에</div><div class="phshot">스크린샷<br>이미지를<br>여기에</div></div>`;
+  }
+
+  let contribHTML = '';
+  if(a.services){
+    contribHTML = `<h4>서비스 구성 (4)</h4>` +
+      a.services.map(s=>`
+        <div class="svc ${s.mobile?'mobile':'web'}">
+          <div class="svc-shot"><img src="${s.shot}" alt="${s.name}"></div>
+          <div class="svc-body">
+            <h5>${s.name}<span class="svc-plat">${s.plat}</span></h5>
+            <div class="svc-desc">${s.desc}</div>
+            <ul>${s.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+          </div>
+        </div>`).join('');
+  } else if(a.highlights){
+    contribHTML = `<h4>주요 기여</h4><div class="hl">` +
+      a.highlights.map(h=>`<div class="hl-item"><div class="hl-t"><span class="dot"></span>${h.t}</div><div class="hl-d">${h.d}</div></div>`).join('') +
+      `</div>`;
+  } else if(a.points){
+    contribHTML = `<h4>주요 기여</h4><ul class="simple">` +
+      a.points.map(p=>`<li>${p}</li>`).join('') + `</ul>`;
+  }
+
+  document.getElementById('modal').innerHTML = `
+    <button class="mclose" onclick="closeApp()">✕</button>
+    <div class="mhead">
+      ${iconHTML(a,true)}
+      <div class="mh-t">
+        <h2>${a.name}</h2>
+        <div class="mh-sub">${a.sub}</div>
+        <div class="mh-row">
+          ${a.live
+            ? `<a class="storebtn" href="${a.live}" target="_blank">🔗 사이트 바로가기</a>`
+            : a.internal
+              ? `<span class="storebtn" style="cursor:default">🔒 사내 서비스</span>`
+              : storeBtn('App Store', a.appstore) + storeBtn('Google Play', a.play)}
+          <span class="mh-period">${a.period}</span>
+        </div>
+      </div>
+    </div>
+    <div class="mstats">
+      <div class="it"><div class="k">담당 역할</div><div class="v">${a.role}</div></div>
+      <div class="it"><div class="k">카테고리</div><div class="v">${a.category}</div></div>
+      <div class="it"><div class="k">기간</div><div class="v">${a.period}</div></div>
+    </div>
+    ${shotsHTML}
+    <div class="mbody">
+      <h4>이 앱에 대하여</h4>
+      <p>${a.about}</p>
+      ${contribHTML}
+      <h4>기술 스택</h4>
+      <div class="stack">${a.stack.map(s=>`<span>${s}</span>`).join('')}</div>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeApp(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeApp()});
+</script>
+</body>
+</html>
