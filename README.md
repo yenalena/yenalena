@@ -18,6 +18,9 @@ Here are some ideas to get you started:
 - ⚡ Fun fact: ...
 -->
 
+![Stats](https://github-readme-stats-yenalena-s-projects.vercel.app/api?username=yenalena&show_icons=true&count_private=true&include_all_commits=tr
+  ue)
+  
 ### Skills
 
 #### Platforms & Languages
