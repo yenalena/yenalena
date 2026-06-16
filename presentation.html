@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lena — Portfolio Deck</title>
+<style>
+  :root{
+    --bg:#0e0e12;
+    --slide:#ffffff;
+    --ink:#1d1d1f;
+    --sub:#6e6e73;
+    --line:#e6e6ea;
+    --accent:#6c5ce7;
+    --accent-2:#9d8bff;
+    --accent-soft:#eee9ff;
+    --ax:#16a085;
+    --ax-2:#48c9b0;
+    --shadow:0 10px 30px rgba(0,0,0,.10);
+    --shadow-lg:0 24px 60px rgba(0,0,0,.22);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Apple SD Gothic Neo","Pretendard","Malgun Gothic",sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+
+  /* ---------- DECK FRAME ---------- */
+  .deck{position:fixed;inset:0;overflow:hidden}
+  .track{display:flex;height:100%;width:100%;
+    transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+  .slide{
+    flex:0 0 100%;width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:6vh 7vw;overflow-y:auto;background:var(--slide);position:relative;
+  }
+  .slide::-webkit-scrollbar{width:0}
+
+  /* ---------- TOP PROGRESS ---------- */
+  .progress{position:fixed;top:0;left:0;height:4px;z-index:40;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    width:0;transition:width .45s ease;border-radius:0 4px 4px 0}
+
+  /* ---------- NAV UI ---------- */
+  .nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;z-index:40;
+    background:rgba(20,20,26,.72);backdrop-filter:blur(12px);
+    padding:9px 14px;border-radius:999px;box-shadow:var(--shadow-lg)}
+  .nav button{width:34px;height:34px;border-radius:999px;border:none;cursor:pointer;
+    background:rgba(255,255,255,.14);color:#fff;font-size:16px;display:flex;
+    align-items:center;justify-content:center;transition:background .2s}
+  .nav button:hover{background:rgba(255,255,255,.30)}
+  .nav button:disabled{opacity:.3;cursor:default}
+  .nav .count{color:#fff;font-size:13px;font-weight:700;min-width:52px;text-align:center;
+    letter-spacing:.5px;font-variant-numeric:tabular-nums}
+  .dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:9px;z-index:40}
+  .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.32);
+    cursor:pointer;transition:all .25s;display:block}
+  .dots i.on{background:#fff;transform:scale(1.5)}
+  .hint{position:fixed;bottom:26px;right:28px;color:rgba(255,255,255,.55);
+    font-size:12px;z-index:40;letter-spacing:.3px}
+  @media(max-width:720px){.dots{display:none}.hint{display:none}}
+  body.clean .nav,body.clean .dots,body.clean .hint,body.clean .progress{display:none!important}
+
+  /* ---------- COVER ---------- */
+  .slide.cover{
+    background:linear-gradient(135deg,#7c6cf0,#9d8bff 55%,#b6a7ff);color:#fff;justify-content:center}
+  .cover .eyebrow{font-weight:800;font-size:clamp(13px,1.4vw,16px);letter-spacing:2px;opacity:.9;text-transform:uppercase}
+  .cover h1{font-size:clamp(40px,6.5vw,84px);line-height:1.05;letter-spacing:-2px;margin:18px 0 20px;font-weight:800}
+  .cover p{font-size:clamp(16px,2vw,23px);max-width:680px;line-height:1.5;opacity:.95}
+  .cover .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+  .cover .pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;padding:10px 18px;font-size:clamp(12px,1.4vw,15px);font-weight:700;backdrop-filter:blur(6px)}
+  .cover .pill b{font-weight:900}
+
+  /* ---------- INTRO (핵심 역량) ---------- */
+  .slide.intro{justify-content:center}
+  .intro-head{max-width:1120px;margin:0 auto 24px;width:100%}
+  .intro-head h2{font-size:clamp(26px,4vw,50px);font-weight:800;letter-spacing:-1px;margin:12px 0 8px}
+  .intro-head p{color:var(--sub);font-size:clamp(14px,1.7vw,19px);line-height:1.5}
+  .pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:1120px;margin:0 auto;width:100%}
+  .pillar{background:#fafafb;border:1px solid var(--line);border-radius:18px;padding:22px 24px;
+    box-shadow:0 4px 16px rgba(0,0,0,.04);position:relative;overflow:hidden}
+  .pillar:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .pillar.ax:before{background:var(--ax)}
+  .pillar .pico{font-size:26px;line-height:1}
+  .pillar h3{font-size:clamp(16px,1.9vw,21px);font-weight:800;margin:12px 0 8px;letter-spacing:-.3px}
+  .pillar p{color:#3a3a40;font-size:clamp(12.5px,1.45vw,15px);line-height:1.55}
+  .pillar p b{color:var(--accent);font-weight:800}
+  .pillar.ax p b{color:var(--ax)}
+
+  /* ---------- SECTION DIVIDER ---------- */
+  .slide.section{justify-content:center;color:#fff}
+  .slide.section.s-ax{background:linear-gradient(135deg,#16a085,#1abc9c 55%,#48c9b0)}
+  .slide.section.s-acc{background:linear-gradient(135deg,#5b4bd6,#7c6cf0 55%,#9d8bff)}
+  .slide.section.s-dark{background:linear-gradient(135deg,#23232b,#34343f 60%,#45455a)}
+  .section .num{font-size:clamp(60px,12vw,150px);font-weight:900;opacity:.22;line-height:1;letter-spacing:-4px}
+  .section h2{font-size:clamp(34px,5.5vw,70px);font-weight:800;letter-spacing:-1.5px;margin:-10px 0 14px}
+  .section .sdesc{font-size:clamp(15px,2vw,22px);opacity:.92}
+
+  /* ---------- PROJECT SLIDE ---------- */
+  .proj{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,60px);align-items:center;width:100%;max-width:1280px;margin:0 auto}
+  .chip-cat{display:inline-block;background:var(--accent-soft);color:var(--accent);
+    font-weight:800;font-size:clamp(11px,1.2vw,13px);letter-spacing:.4px;
+    padding:6px 14px;border-radius:999px;text-transform:uppercase}
+  .chip-cat.ax{background:#e3f7f1;color:var(--ax)}
+  .proj h2{font-size:clamp(26px,3.6vw,44px);letter-spacing:-1px;margin:14px 0 8px;font-weight:800}
+  .proj-sub{color:var(--sub);font-size:clamp(13.5px,1.6vw,18px);line-height:1.45}
+  .proj-meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px}
+  .proj-meta span{background:#f2f2f5;border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;font-size:clamp(11px,1.3vw,13.5px);font-weight:700;color:#3a3a40}
+  .proj-about{color:#3a3a40;font-size:clamp(12.5px,1.45vw,15.5px);line-height:1.55;margin-bottom:12px}
+  .proj-points{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .proj-points li{position:relative;padding-left:22px;font-size:clamp(12px,1.4vw,15px);
+    line-height:1.5;color:#2c2c2e}
+  .proj-points li:before{content:"›";position:absolute;left:5px;top:-1px;color:var(--accent);font-weight:900}
+  .proj-why{margin-top:14px;background:var(--accent-soft);border-left:3px solid var(--accent);
+    border-radius:0 12px 12px 0;padding:12px 16px;font-size:clamp(12px,1.4vw,14.5px);
+    line-height:1.55;color:#3a2f6b}
+  .proj-why.ax{background:#e3f7f1;border-left-color:var(--ax);color:#0f5e4d}
+  .proj-why .why-label{display:block;font-weight:900;font-size:11px;letter-spacing:.5px;
+    color:var(--accent);margin-bottom:5px}
+  .proj-why.ax .why-label{color:var(--ax)}
+  .stack{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
+  .stack span{background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;font-size:clamp(11px,1.25vw,13px);font-weight:700;color:#3a3a40;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+
+  .proj-shots{display:flex;align-items:center;justify-content:center;gap:14px}
+  .proj-shots.phones img{height:clamp(260px,56vh,480px);border-radius:22px;
+    box-shadow:var(--shadow-lg);border:1px solid var(--line);background:#fff}
+  .proj-shots.phones img:nth-child(2){transform:translateY(-14px)}
+  .proj-shots.phones img:nth-child(3){transform:translateY(8px)}
+  .proj-shots.wide img{width:100%;max-height:64vh;object-fit:cover;border-radius:18px;
+    box-shadow:var(--shadow-lg);border:1px solid var(--line)}
+
+  /* ---------- POGNY (멀티 서비스) ---------- */
+  .pogny{justify-content:flex-start;padding-top:5vh}
+  .pogny-head{max-width:1280px;margin:0 auto 18px;width:100%}
+  .pogny-head h2{font-size:clamp(24px,3.4vw,42px);letter-spacing:-1px;margin:12px 0 8px;font-weight:800}
+  .pogny-head p{color:#3a3a40;font-size:clamp(12.5px,1.45vw,15.5px);line-height:1.5;max-width:960px}
+  .pogny-why{max-width:1280px;margin:10px auto 0;width:100%;background:#e3f7f1;border-left:3px solid var(--ax);
+    border-radius:0 12px 12px 0;padding:11px 16px;font-size:clamp(12px,1.35vw,14px);line-height:1.5;color:#0f5e4d}
+  .pogny-why b{color:var(--ax);font-weight:900}
+  .svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1280px;margin:16px auto 0;width:100%}
+  .svc-card{display:flex;gap:14px;background:#fafafb;border:1px solid var(--line);
+    border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+  .svc-card img{width:80px;border-radius:12px;border:1px solid var(--line);object-fit:cover;
+    align-self:flex-start;background:#fff;flex-shrink:0}
+  .svc-info h4{font-size:clamp(13.5px,1.55vw,16.5px);font-weight:800;display:flex;align-items:center;
+    gap:8px;flex-wrap:wrap;letter-spacing:-.3px}
+  .svc-info .badge{font-size:10.5px;font-weight:800;background:#e3f7f1;color:var(--ax);
+    border-radius:6px;padding:3px 8px;letter-spacing:.3px}
+  .svc-info p{color:var(--sub);font-size:clamp(11px,1.25vw,12.5px);line-height:1.4;margin:6px 0 7px}
+  .svc-info ul{list-style:none;display:flex;flex-direction:column;gap:3px}
+  .svc-info li{position:relative;padding-left:15px;font-size:clamp(10.5px,1.2vw,12px);
+    line-height:1.4;color:#3a3a40}
+  .svc-info li:before{content:"›";position:absolute;left:2px;color:var(--ax);font-weight:900}
+
+  /* ---------- CONTACT ---------- */
+  .slide.contact{background:linear-gradient(135deg,#23232b,#34343f 60%,#45455a);color:#fff;justify-content:center}
+  .contact h2{font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-1.5px;margin-bottom:18px}
+  .contact p{font-size:clamp(15px,2vw,21px);opacity:.9;line-height:1.6;max-width:640px}
+  .contact .links{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .contact .links a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+    color:#fff;text-decoration:none;border-radius:999px;padding:12px 24px;font-weight:700;
+    font-size:clamp(13px,1.6vw,16px);transition:background .2s}
+  .contact .links a:hover{background:rgba(255,255,255,.30)}
+
+  @media(max-width:860px){
+    .proj{grid-template-columns:1fr;gap:24px}
+    .proj-shots{order:2}
+    .proj-shots.phones img{height:38vh}
+    .pillars{grid-template-columns:1fr}
+    .svc-grid{grid-template-columns:1fr}
+    .svc-card img{width:64px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="deck"><div class="track" id="track"></div></div>
+
+<div class="dots" id="dots"></div>
+<div class="nav">
+  <button id="prev" aria-label="이전">‹</button>
+  <span class="count" id="count">1 / 1</span>
+  <button id="next" aria-label="다음">›</button>
+</div>
+<div class="hint">← → 방향키 · Space · F 전체화면</div>
+
+<script>
+/* ===== 핵심 역량 (엔지니어링 관점) ===== */
+const PILLARS = [
+  {ico:"🧩", cls:"", title:"시스템 관점의 아키텍처 설계",
+   html:"기능이 아니라 <b>구조</b>로 문제를 풉니다. <b>클린 아키텍처·멀티 레포</b>로 도메인을 분리해 결합도를 낮추고, 서비스 간 실시간 데이터 흐름을 직접 설계합니다."},
+  {ico:"🚀", cls:"", title:"신기술 선제 도입",
+   html:"기술 트렌드를 빠르게 흡수해 제품에 적용합니다. <b>Flutter Web·Riverpod</b> 선제 도입, <b>ChatGPT·Claude API</b> 서비스 연동, <b>100% AI Agentic coding</b> 워크플로우 운영."},
+  {ico:"🗄️", cls:"ax", title:"데이터 모델링 & 백엔드",
+   html:"<b>Firebase·AWS</b> 기반 백엔드와 <b>REST API</b>, 실시간 동기화·DB 설계로 확장 가능한 구조를 만듭니다. EMR 엑셀 파싱·구간별 이동시간 DB 등 도메인 데이터를 직접 모델링."},
+  {ico:"🎯", cls:"ax", title:"End-to-End 책임감",
+   html:"<b>0→1 기획부터 배포·운영</b>까지. 다수의 상용 O2O 서비스를 바닥부터 만들고 트래픽 환경에서 운영하며, 하나의 도메인을 끝까지 책임진 경험을 보유."}
+];
+
+/* ===== 프로젝트 데이터 ===== */
+const APPS = {
+  pogny:{
+    name:"포그니병원 운영 자동화", sub:"AI 기반 병원 현장 업무 디지털 전환 · 서로 연결된 4개 서비스",
+    period:"2026.04 ~ 재직중", category:"AX · 헬스케어 DX", role:"기획·설계·개발 총괄 (단독)",
+    about:"병원 현장의 수기·엑셀 기반 업무를 AI로 디지털 전환(AX)한 사내 플랫폼입니다. 차량 배차, 환자 신청 키오스크, 영양실 식이 관리까지 서로 연결된 4개 서비스를 단독으로 기획·설계·개발했습니다.",
+    why:"<b>4개 서비스를 단일 도메인으로 통합 설계</b>해, 한 서비스의 입력이 관련 서비스에 실시간 전파되는 이벤트 기반 데이터 흐름을 구축했습니다. 사람이 반복하던 엑셀·메모 처리를 AI 파싱·자동 분류로 대체해, 운영자가 '판단'에만 집중하도록 시스템을 재설계했습니다.",
+    services:[
+      {name:"환자 신청 키오스크", plat:"모바일/키오스크", shot:"assets/pogny/patient.png",
+       desc:"환자·보호자가 직접 차량과 식이를 신청하는 키오스크. 직관적 카드 UI.",
+       points:["차량 운행 신청 · 귀원 요청","신규 입원 식이 입력 · 끼니별 취소","입력 즉시 관리자·영양실 실시간 반영"]},
+      {name:"영양실 식이 관리 대시보드", plat:"웹", shot:"assets/pogny/diet.png",
+       desc:"EMR 식이 엑셀을 브라우저에서 바로 파싱해 배식 요약 자동 생성.",
+       points:["xls 파싱(cp949) → 처방별·층별 수량 집계","AI 메모 자동 분류 → 배식 고려사항 정리","끼니 간 변경 자동 감지, 배식 요약 인쇄"]},
+      {name:"차량운행 관리자", plat:"웹", shot:"assets/pogny/admin.png",
+       desc:"환자 신청을 받아 배차하고 운행을 관리하는 통합 관제 대시보드.",
+       points:["운행·환자·차량·기사 통합 관리","앱 신청 실시간 수신 → 기사·차량 배차","구간별 이동시간 DB로 예상 소요시간 산출"]},
+      {name:"기사 앱", plat:"모바일", shot:"assets/pogny/driver.png",
+       desc:"배차 일정을 확인하고 원터치로 운행을 기록하는 기사용 앱.",
+       points:["오늘 배차 확인 · 원터치 통화","원터치 운행 시작·종료, 소요시간 자동 계산","계기판 km 기록, 내 운행 이력 조회"]}
+    ]
+  },
+  research:{
+    name:"조사구 사업체 검색·관리 시스템", sub:"사업체 정보 통합 모니터링 & 좌표 일괄 매핑 웹 툴",
+    period:"웹 · 개인 프로젝트", category:"AX · 데이터 관리 툴", role:"기획·개발 (단독)",
+    wide:true, live:"https://research-helper-vxl1.vercel.app/",
+    shots:["assets/research/screen_1.png"],
+    stack:["React","Next.js","Vercel"],
+    about:"현장 조사 업무를 디지털화한 웹 도구입니다. 조사구 내 사업체 정보를 통합 검색·관리하고 조사 진행 상태를 추적합니다. 안산 백운동·원곡동 일대 254개소 데이터를 조사구별로 분류해 모니터링하도록 설계했습니다.",
+    points:[
+      "사업체명·대표자·주소·전화번호 실시간 통합 쿼리 필터 검색",
+      "조사구별 분류 + 진행 상태(미조사·진행중·완료) 추적·집계",
+      "CSV 일괄 가져오기로 대량 사업체 데이터 등록",
+      "좌표 일괄 매핑 기반 조사구 가상 지도 시각화"
+    ],
+    why:"수기 조사 업무를 <b>'데이터 모델' 중심으로 재정의</b>해 입력→분류→추적→시각화를 한 흐름으로 묶었습니다. 빠른 배포와 반응형을 위해 React·Next.js·Vercel을 선택했습니다."
+  },
+  beforpet:{
+    name:"비포펫 BeforPet", sub:"반려견 산책 중개 · 실시간 라이브 GPS 트래킹 O2O (누적 다운로드 약 1만)",
+    period:"2025.01 ~ 2026.03", category:"펫 · O2O 위치기반", role:"Tech Lead · 아키텍처 설계",
+    shots:["assets/beforpet/screenshot_1.jpg","assets/beforpet/screenshot_2.jpg","assets/beforpet/screenshot_3.jpg"],
+    stack:["Flutter","Riverpod / GetX","NaverMap API","PG 결제","CI/CD"],
+    about:"견주와 도그워커를 매칭하고 산책 진행 상황을 실시간으로 기록하는 O2O 서비스입니다. 사이드 프로젝트에서 정식 상용 서비스로 합류해 핵심 모바일 앱 개발 총괄과 서비스 아키텍처 설계를 담당했습니다.",
+    points:[
+      "사이드→상용 전환에 맞춰 Riverpod 기반 상태관리로 아키텍처 재정비, 실시간 매칭 데이터 동기화 설계",
+      "백그라운드 GPS 라이브 트래킹 — iOS/Android 권한·절전모드 파편화 대응, 경로 보정 필터링",
+      "산책 보고서 자동 생성 — 경로(Polyline)·거리·시간 + 배변·급수 이벤트 타임라인 결합",
+      "클린 아키텍처 + 코드 리뷰·CI/CD 자동화로 한정된 리소스에서 배포 안정성 확보"
+    ],
+    why:"OS마다 제각각인 <b>백그라운드 위치·절전 정책을 플랫폼 추상화 계층 뒤로 숨겨</b>, 기능이 늘어나도 트래킹 안정성이 흔들리지 않는 구조를 만들었습니다."
+  },
+  ilovesalon:{
+    name:"아이러브살롱", sub:"헤어 디자이너·고객 매칭 O2O 및 커뮤니티 플랫폼",
+    period:"2024.03 ~ 2024.09", category:"뷰티 · O2O 매칭", role:"개발 · 서비스 확장 주도",
+    shots:["assets/ilovesalon/screenshot_1.webp","assets/ilovesalon/screenshot_2.webp","assets/ilovesalon/screenshot_3.webp"],
+    stack:["Flutter","Clean Architecture","ChatGPT Assistant API","Flutter Web","REST API"],
+    about:"헤어 디자이너와 고객을 연결하는 O2O 서비스이자 커뮤니티 플랫폼입니다. 고객과 디자이너의 비즈니스 로직이 완전히 다른 점을 고려해 타겟별로 앱을 분리 구축하고, AI·웹 기반으로 서비스 확장을 주도했습니다.",
+    points:[
+      "고객·디자이너용 멀티 레포 + 클린 아키텍처 — 계층 분리로 결합도↓, 앱별 독립 배포 사이클 확보",
+      "ChatGPT Assistant API 연동 'AI 모발 진단·맞춤 시술 제안' — 단순 매칭을 넘어선 컨설팅 가치 제공",
+      "Flutter Web 선제 도입 — 단일 코드베이스 반응형·웹 라우팅, 설치 없는 접근 채널 추가",
+      "크로스플랫폼 확장으로 다양한 디바이스 사용 경험 통일"
+    ],
+    why:"<b>B2C·디자이너의 비즈니스 로직이 근본적으로 다르다</b>고 판단해 하나의 앱이 아닌 멀티 레포로 도메인을 분리했고, 신기술(Flutter Web)을 선제 도입해 설치 장벽 없는 신규 채널을 확보했습니다."
+  },
+  petpharm:{
+    name:"펫팜 (PetPharm)", sub:"반려동물 헬스케어 · 동물약국 매칭 O2O 플랫폼 (누적 다운로드 약 2만)",
+    period:"2022.03 ~ 2024.03", category:"펫 · 헬스케어 O2O", role:"프론트엔드 개발 (기여 80%)",
+    shots:["assets/petpharm/screenshot_1.png","assets/petpharm/screenshot_2.png","assets/petpharm/screenshot_3.png"],
+    stack:["Flutter","Kotlin","GetX","Dio","Firebase","AppsFlyer","Naver Map"],
+    about:"위치 기반 동물약국 찾기와 건강·복약 관리를 제공하는 O2O 플랫폼입니다. 기획 단계부터 참여해 초기 1인 개발로 정식 출시를 완수하고, 이후 팀 빌딩을 거쳐 약 2년간 안정적으로 서비스를 고도화했습니다.",
+    points:[
+      "0→1 MVP 단독 개발 — Kotlin+Flutter 하이브리드, v1.0 런칭 후 4주 스프린트로 2년 운영",
+      "핵심 피처 — LBS 약국 찾기 / 카메라 소변검사키트 진단 / 캘린더 복약 관리",
+      "GetX 전역상태·라우팅 + Dio·GetConnect 네트워크 계층 아키텍처 설계",
+      "Remote Config 강제 업데이트·Crashlytics·AppsFlyer로 운영 가시성·전환율 트래킹 시스템화"
+    ],
+    why:"<b>네이티브 기능(카메라 진단)과 크로스플랫폼 생산성을 동시에 잡기 위해 Kotlin+Flutter 하이브리드</b>를 선택했고, 운영 단계의 안정성을 위해 모니터링·강제 업데이트를 인프라로 구축했습니다."
+  },
+  thecup:{
+    name:"TheCup", sub:"목표 동기부여·성취를 돕는 자기계발 커뮤니티 앱",
+    period:"2021.05 ~ 2021.12", category:"자기계발 · 커뮤니티", role:"모바일 앱 1인 개발",
+    shots:["assets/thecup/screenshot_1.png","assets/thecup/screenshot_2.png","assets/thecup/screenshot_3.png"],
+    stack:["Flutter","GetX","Firebase","IAP","Stripe API"],
+    about:"사용자의 목표 달성을 돕는 자기계발 커뮤니티 앱입니다. 스타트업 초기 1인 개발자로 합류해 기획·화면 설계부터 앱 개발, 결제 연동, 배포까지 약 7개월간 전체 제품 사이클을 단독 수행해 런칭했습니다.",
+    points:[
+      "기획→출시 End-to-End 1인 개발 — 기능 설계서·유저 플로우·화면 설계부터 배포까지",
+      "멀티 플랫폼 결제 추상화 — IAP 네이티브 인앱결제 + Stripe 웹 결제 경로 분리 구축",
+      "GetX 기반 MVC 패턴 설계, Firebase(Auth·RTDB) BaaS로 서버 없이 0→1 검증",
+      "로그인/피드/콘텐츠 CRUD/검색 등 핵심 기능 전반 구현"
+    ],
+    why:"<b>IAP와 Stripe라는 성격이 다른 결제 채널을 공통 인터페이스로 추상화</b>해 플랫폼별 결제 흐름을 분리했고, BaaS로 서버 구축 없이 제품 가설을 빠르게 검증했습니다."
+  },
+  songsong:{
+    name:"쏭쏭이", sub:"한계없는 무한 랜덤 뽑기 도구",
+    period:"개인 프로젝트", category:"유틸리티", role:"단독 개발",
+    shots:["assets/songsong/screenshot_1.webp","assets/songsong/screenshot_2.webp","assets/songsong/screenshot_3.webp"],
+    stack:["Flutter","Dart","Rive"],
+    about:"그룹·수량을 자유롭게 설정해 나만의 랜덤 뽑기를 만드는 유틸리티 앱입니다. 저녁 메뉴 정하기, 벌칙 게임, 선물 추첨 등 다양한 상황에서 활용할 수 있습니다.",
+    points:[
+      "그룹·수량 커스텀 설정 + 뽑기 현황판",
+      "커스텀 이미지 삽입 등 직관적 UI",
+      "Rive 라이브러리로 역동적인 당첨 애니메이션 구현",
+      "iPhone·iPad 해상도 동시 대응 반응형 UI"
+    ],
+    why:"<b>Rive를 도입</b>해 무거운 영상 리소스 없이 가볍고 역동적인 당첨 애니메이션을 구현했고, 한 코드로 iPhone·iPad 해상도를 모두 대응했습니다."
+  },
+  pokewiki:{
+    name:"PokeWiki", sub:"최신 도감까지 수록한 포켓몬 도감 앱",
+    period:"개인 프로젝트", category:"레퍼런스 · 도감", role:"단독 개발",
+    shots:["assets/pokewiki/screenshot_1.webp","assets/pokewiki/screenshot_2.webp","assets/pokewiki/screenshot_3.webp"],
+    stack:["Flutter","Dart","REST API"],
+    about:"전국도감부터 팔데아도감까지 최신 도감을 모두 수록한 포켓몬 도감 앱입니다. 타입·형태 기반 필터 검색으로 원하는 포켓몬을 빠르게 찾을 수 있습니다.",
+    points:[
+      "전국도감~팔데아도감 등 최신 도감 데이터 수록",
+      "타입·형태 기반 필터 검색",
+      "도감 카드·목록·상세 UI 및 REST API 연동 구현"
+    ],
+    why:"<b>외부 REST API 데이터를 타입·형태 기준으로 정규화</b>해, 대량 데이터에서도 빠르게 동작하는 필터 검색을 구현했습니다."
+  }
+};
+
+/* ===== 슬라이드 순서 ===== */
+const DECK = [
+  {kind:'cover'},
+  {kind:'intro'},
+  {kind:'section', cls:'s-ax',   num:'01', title:'AX · 업무 자동화', desc:'AI·웹 기반 현장 업무 디지털 전환'},
+  {kind:'pogny'},
+  {kind:'project', key:'research'},
+  {kind:'section', cls:'s-acc',  num:'02', title:'회사 프로젝트', desc:'실제 출시된 상용 서비스'},
+  {kind:'project', key:'beforpet'},
+  {kind:'project', key:'ilovesalon'},
+  {kind:'project', key:'petpharm'},
+  {kind:'project', key:'thecup'},
+  {kind:'section', cls:'s-dark', num:'03', title:'사이드 프로젝트', desc:'개인 작업물'},
+  {kind:'project', key:'songsong'},
+  {kind:'project', key:'pokewiki'},
+  {kind:'contact'}
+];
+
+/* ===== 렌더러 ===== */
+function shotsHTML(a){
+  if(!a.shots || !a.shots.length) return '';
+  const cls = a.wide ? 'wide' : 'phones';
+  return `<div class="proj-shots ${cls}">` +
+    a.shots.map(s=>`<img src="${s}" alt="${a.name} 화면" loading="lazy">`).join('') + `</div>`;
+}
+function projectSlide(a){
+  const axCls = (a.category||'').includes('AX') ? 'ax' : '';
+  return `<section class="slide project">
+    <div class="proj">
+      <div class="proj-text">
+        <span class="chip-cat ${axCls}">${a.category}</span>
+        <h2>${a.name}</h2>
+        <div class="proj-sub">${a.sub}</div>
+        <div class="proj-meta"><span>👤 ${a.role}</span><span>🗓 ${a.period}</span>${a.live?`<span>🔗 라이브</span>`:''}</div>
+        <p class="proj-about">${a.about}</p>
+        <ul class="proj-points">${a.points.slice(0,4).map(p=>`<li>${p}</li>`).join('')}</ul>
+        ${a.why?`<div class="proj-why ${axCls}"><span class="why-label">🧩 엔지니어링 관점</span>${a.why}</div>`:''}
+        <div class="stack">${a.stack.slice(0,7).map(s=>`<span>${s}</span>`).join('')}</div>
+      </div>
+      ${shotsHTML(a)}
+    </div>
+  </section>`;
+}
+function pognySlide(a){
+  return `<section class="slide pogny">
+    <div class="pogny-head">
+      <span class="chip-cat ax">AX · AI 기반 사내 플랫폼</span>
+      <h2>${a.name}</h2>
+      <p>${a.about}</p>
+    </div>
+    ${a.why?`<div class="pogny-why"><b>🧩 엔지니어링 관점 · </b>${a.why}</div>`:''}
+    <div class="svc-grid">
+      ${a.services.map(s=>`
+        <div class="svc-card">
+          <img src="${s.shot}" alt="${s.name}" loading="lazy">
+          <div class="svc-info">
+            <h4>${s.name}<span class="badge">${s.plat}</span></h4>
+            <p>${s.desc}</p>
+            <ul>${s.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+          </div>
+        </div>`).join('')}
+    </div>
+  </section>`;
+}
+function coverSlide(){
+  return `<section class="slide cover">
+    <div class="eyebrow">Full-stack · Architecture · AI Agentic · AX</div>
+    <h1>이예나의<br>앱 포트폴리오</h1>
+    <p>기능 구현을 넘어 <b>시스템을 설계</b>합니다. 기획부터 배포·운영까지 상용 서비스를 만들고, AI를 활용해 현장 업무를 디지털 전환(AX)합니다.</p>
+    <div class="meta">
+      <div class="pill"><b>6년+</b> 개발 경력</div>
+      <div class="pill"><b>4</b> 상용 서비스 · <b>2</b> AX 서비스</div>
+      <div class="pill">Flutter · Riverpod · Firebase · AWS</div>
+      <div class="pill">📫 dpsk2880@gmail.com</div>
+    </div>
+  </section>`;
+}
+function introSlide(){
+  return `<section class="slide intro">
+    <div class="intro-head">
+      <span class="chip-cat">Core Strengths</span>
+      <h2>엔지니어링으로 비즈니스 문제를 풉니다</h2>
+      <p>넓은 기술 시야로 트렌드에 발맞춰, 기능이 아닌 시스템 관점에서 문제를 해결합니다.</p>
+    </div>
+    <div class="pillars">
+      ${PILLARS.map(p=>`
+        <div class="pillar ${p.cls}">
+          <div class="pico">${p.ico}</div>
+          <h3>${p.title}</h3>
+          <p>${p.html}</p>
+        </div>`).join('')}
+    </div>
+  </section>`;
+}
+function sectionSlide(s){
+  return `<section class="slide section ${s.cls}">
+    <div class="num">${s.num}</div>
+    <h2>${s.title}</h2>
+    <div class="sdesc">${s.desc}</div>
+  </section>`;
+}
+function contactSlide(){
+  return `<section class="slide contact">
+    <h2>감사합니다</h2>
+    <p>서비스 도메인에 대한 깊은 이해와 AI 활용 능력으로,<br>플랫폼의 핵심 서비스를 빠르고 안정적으로 만들겠습니다.</p>
+    <div class="links">
+      <a href="mailto:dpsk2880@gmail.com">📫 dpsk2880@gmail.com</a>
+      <a href="index.html">🗂 카드형 포트폴리오 보기</a>
+    </div>
+  </section>`;
+}
+
+const track = document.getElementById('track');
+track.innerHTML = DECK.map(s=>{
+  if(s.kind==='cover')   return coverSlide();
+  if(s.kind==='intro')   return introSlide();
+  if(s.kind==='section') return sectionSlide(s);
+  if(s.kind==='pogny')   return pognySlide(APPS.pogny);
+  if(s.kind==='contact') return contactSlide();
+  return projectSlide(APPS[s.key]);
+}).join('');
+
+/* ===== 내비게이션 ===== */
+const total = DECK.length;
+let idx = 0;
+const dots = document.getElementById('dots');
+dots.innerHTML = DECK.map((_,i)=>`<i data-i="${i}"></i>`).join('');
+const dotEls = [...dots.children];
+const countEl = document.getElementById('count');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const progress = document.getElementById('progress');
+
+function go(i){
+  idx = Math.max(0, Math.min(total-1, i));
+  track.style.transform = `translateX(-${idx*100}%)`;
+  countEl.textContent = `${idx+1} / ${total}`;
+  progress.style.width = `${(idx/(total-1))*100}%`;
+  dotEls.forEach((d,k)=>d.classList.toggle('on', k===idx));
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===total-1;
+  if(location.hash !== '#'+idx) history.replaceState(null,'','#'+idx);
+}
+const next = ()=>go(idx+1), prev = ()=>go(idx-1);
+nextBtn.onclick = next; prevBtn.onclick = prev;
+dotEls.forEach(d=>d.onclick=()=>go(+d.dataset.i));
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next();}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0);}
+  else if(e.key==='End'){go(total-1);}
+  else if(e.key==='f'||e.key==='F'){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  }
+});
+
+/* 터치 스와이프 */
+let tx=0;
+track.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+track.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>50){ dx<0?next():prev(); }
+},{passive:true});
+
+/* 휠(트랙패드) — 가로/세로 모두 인식, 디바운스 */
+let wheelLock=false;
+window.addEventListener('wheel',e=>{
+  const d = Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  if(Math.abs(d)<24||wheelLock) return;
+  wheelLock=true; d>0?next():prev();
+  setTimeout(()=>wheelLock=false,650);
+},{passive:true});
+
+if(location.search.indexOf('clean')>-1) document.body.classList.add('clean');
+go(parseInt(location.hash.slice(1))||0);
+</script>
+</body>
+</html>
